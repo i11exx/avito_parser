@@ -1,5 +1,10 @@
+from parser import Parser
+
+
 def main():
-    print('Hello world')
+    p = Parser()
+    pages_amount = p.get_pages_amount()
+    print(pages_amount)
 
 
 if __name__ == '__main__':

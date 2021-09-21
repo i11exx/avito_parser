@@ -1,4 +1,6 @@
+import bs4
 import requests
+import urllib.parse
 
 
 class Parser:
@@ -16,9 +18,22 @@ class Parser:
             'radius': 0,
         }
         if page and page > 1:
-            # setattr(params, 'p', page)
             params['p'] = str(page)
 
         url = 'https://www.avito.ru/moskva/avtomobili/audi/q7-ASgBAgICAkTgtg3elyjitg3UrSg'
         result = self.session.get(url, params=params)
         return result.text
+
+    def get_pages_amount(self):
+        text = self.get_page()
+        soup = bs4.BeautifulSoup(text, 'lxml')
+
+        container = soup.select('a.pagination-page')
+        last_button = container[-1]
+        href = last_button.get('href')
+        if not href:
+            return 0
+
+        r = urllib.parse.urlparse(href)
+        params = urllib.parse.parse_qs(r.query)
+        return int(params['p'][0])
