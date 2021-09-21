@@ -12,7 +12,7 @@ class Parser:
             'Accept-Language': 'ru'
         }
 
-    def get_page(self, page: int = None):
+    def get_page_text(self, page: int = None):
         params = {
             'cd': 1,
             'radius': 0,
@@ -25,7 +25,7 @@ class Parser:
         return result.text
 
     def get_pages_amount(self):
-        text = self.get_page()
+        text = self.get_page_text()
         soup = bs4.BeautifulSoup(text, 'lxml')
 
         container = soup.select('a.pagination-page')
@@ -37,3 +37,36 @@ class Parser:
         r = urllib.parse.urlparse(href)
         params = urllib.parse.parse_qs(r.query)
         return int(params['p'][0])
+
+    def parse_advert(self, item):
+        url_block = item.select_one(
+            'a.link-link-MbQDP.link-design-default-_nSbv.title-root-j7cja.iva-item-title-_qCwt.title-listRedesign-XHq38.title-root_maxHeight-SXHes')
+        href = url_block.get('href')
+        if href:
+            url = 'https://www.avito.ru' + href
+        else:
+            url = None
+
+        title_block = item.select_one(
+            'h3.title-root-j7cja.iva-item-title-_qCwt.title-listRedesign-XHq38.title-root_maxHeight-SXHes.text-text-LurtD.text-size-s-BxGpL.text-bold-SinUO')
+        title = title_block.string.strip()
+
+        return {
+            'title': title,
+            'url': url,
+        }
+
+    def parse_page(self, page: int = None):
+        text = self.get_page_text(page=page)
+        soup = bs4.BeautifulSoup(text, 'lxml')
+
+        adverts_wrapper = soup.select(
+            'div.iva-item-root-Nj_hb.photo-slider-slider-_PvpN.iva-item-list-H_dpX.iva-item-redesign-nV4C4.iva-item-responsive-gIKjW.items-item-My3ih.items-listItem-Gd1jN.js-catalog-item-enum')
+        for advert in adverts_wrapper:
+            block = self.parse_advert(item=advert)
+            print(block)
+
+    def parse_adverts(self):
+        limit = self.get_pages_amount()
+        for i in range(1, limit + 1):
+            self.parse_page(page=i)
