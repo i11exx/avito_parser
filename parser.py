@@ -47,13 +47,38 @@ class Parser:
         else:
             url = None
 
+        # Выброр блока с названием
         title_block = item.select_one(
             'h3.title-root-j7cja.iva-item-title-_qCwt.title-listRedesign-XHq38.title-root_maxHeight-SXHes.text-text-LurtD.text-size-s-BxGpL.text-bold-SinUO')
         title = title_block.string.strip()
 
+        # Выбор блока с названием и валютой
+        price_block = item.select_one('span.price-text-E1Y7h.text-text-LurtD.text-size-s-BxGpL')
+        price_block = price_block.get_text('\n')
+        list1 = price_block.split('\n')
+        mapped_list = map(lambda i: i.strip(), list1)
+        filtered_list = filter(None, mapped_list)
+        price_block = list(filtered_list)
+        if len(price_block) == 2:
+            price, currency = price_block
+            price = "".join(price.split('\xa0'))
+        else:
+            price, currency = None, None
+            print('Ошибка при поиске цены:', price_block)
+
+        # Выбор блока с датой размещения объявления
+        date = None
+        date_block = item.select_one('div.date-text-VwmJG.text-text-LurtD.text-size-s-BxGpL.text-color-noaccent-P1Rfs')
+        date = date_block.string.strip()  # date_block.get('data-absolute-date')
+        # if absolute_date:
+        # date = self.parse_date(item=absolute_date)
+
         return {
             'title': title,
+            'price': price,
             'url': url,
+            'currency': currency,
+            'date': date,
         }
 
     def parse_page(self, page: int = None):
