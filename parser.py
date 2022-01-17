@@ -50,7 +50,7 @@ class Parser:
             elif day == 'Вчера':
                 date = datetime.date.today() - datetime.timedelta(days=1)
             else:
-                print('Не удаелось получить день:', item)
+                print("Не удаелось получить день:", item)
                 return
 
             time = datetime.datetime.strptime(time, '%Н:%M').time()
@@ -75,7 +75,7 @@ class Parser:
             }
             month = month_map.get(month_ad)
             if not month:
-                print('Не удалось получить месяц:', item)
+                print("Не удалось получить месяц:", item)
                 return
 
             today = datetime.datetime.today()
@@ -83,7 +83,7 @@ class Parser:
             return datetime.datetime(day=day, month=month, year=today.year, hour=time.hour, minute=time.minute)
 
         else:
-            print('Не удалось разобрать формат:', item)
+            print("Не удалось разобрать формат:", item)
             return
 
     def parse_advert(self, item):
@@ -112,7 +112,7 @@ class Parser:
             price = "".join(price.split('\xa0'))
         else:
             price, currency = None, None
-            print('Ошибка при поиске цены:', price_block)
+            print("Ошибка при поиске цены:", price_block)
 
         # Выбор блока с датой размещения объявления
         date = None
