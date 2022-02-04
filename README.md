@@ -20,5 +20,3 @@ python main.py
 
 ### В файле _parser.py_ в функции get_page можно поменять параметр url и запустить _main.py_
 `url = 'https://www.avito.ru/moskva/avtomobili/audi/q7-ASgBAgICAkTgtg3elyjitg3UrSg' # Вместо указанного значения, вставьте ссылку вашего запроса`
-
-
